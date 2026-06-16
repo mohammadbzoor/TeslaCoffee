@@ -1,0 +1,130 @@
+.auth-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 520px;
+  background: #2f2f2f;
+  border-radius: 18px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 0 0 2px rgba(180, 91, 53, 0.35), 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.auth-title {
+  color: #d4792a;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-label {
+  color: #d4792a;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.auth-input {
+  background-color: #222 !important;
+  border: 1px solid #3a3a3a !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  padding: 0.85rem 1rem !important;
+  text-align: right;
+}
+
+.auth-input::placeholder {
+  color: #888 !important;
+}
+
+.auth-input:focus {
+  border-color: #b45b35 !important;
+  box-shadow: 0 0 0 0.2rem rgba(180, 91, 53, 0.2) !important;
+}
+
+.auth-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #b45b35 0%, #e7b07a 100%);
+  color: #222;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(180, 91, 53, 0.35);
+}
+
+.auth-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #d4792a;
+  font-size: 1rem;
+}
+
+.auth-footer a {
+  color: #d4792a;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.auth-footer a:hover,
+.auth-link-btn:hover {
+  color: #b45b35 !important;
+}
+
+.auth-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #d4792a;
+  text-decoration: underline;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.auth-alert {
+  border-radius: 10px;
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.auth-loading-text {
+  color: #d4792a;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.nav-user-name {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.nav-logout-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.nav-logout-btn:hover {
+  color: #8c4025 !important;
+}

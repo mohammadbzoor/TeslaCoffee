@@ -1,0 +1,98 @@
+/* سكرول أفقي للأزرار (موبايل) */
+
+
+/* زر التصنيف */
+.category-btn {
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 2px solid #B45B35;
+  background-color: transparent;
+  color: #B45B35;
+  font-family: "Almarai", sans-serif;
+  transition: all 0.2s ease-in-out;
+}
+
+.category-btn:hover {
+  background-color: #B45B35;
+  color: white;
+}
+
+.category-btn.active {
+  background-color: #B45B35;
+  color: white;
+  font-weight: bold;
+}
+
+/* تصميم الـ <select> */
+.custom-select {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #B45B35;
+  font-family: "Almarai", sans-serif;
+  color: #555;
+}
+
+/* Dropdown مخصص */
+.custom-dropdown {
+  font-size: 1.1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  text-align: right;
+  background-position: left 1rem center;
+  background-size: 16px 16px;
+  font-family: "Almarai", sans-serif;
+  border: 2px solid #B45B35;
+  color: #555;
+}
+.dropdown-header {
+  padding: 10px 16px;
+  border: 2px solid #B45B35;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1.1rem;
+  color: #555;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem; /* ✅ مسافة بين النص والسهم */
+}
+/* سهم متحرك */
+.arrow {
+   transition: transform 0.3s ease;
+  color: #B45B35;
+  font-size: 1.3rem; /* ✅ أكبر شوي */
+  margin-top: 2px;    /* ✅ نزله شوي لمحاذاة النص */
+}
+
+.arrow.rotate {
+  transform: rotate(180deg);
+}
+
+/* قائمة منسدلة */
+.dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 5px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-list li {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: "Almarai", sans-serif;
+  color: #555;
+}
+
+.dropdown-list li:hover {
+  background-color: #f6f6f6;
+  color: #B45B35;
+  font-weight: bold;
+}
