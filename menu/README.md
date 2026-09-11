@@ -1,12 +1,14 @@
-# ☕ Tesla Coffee — Frontend Application
+# ☕ Tesla Coffee — Web Application Client
 
-This directory contains the React 19 web application for **Tesla Coffee**.
+This directory contains the React 19 source code, component library, and Firebase integration layers for the **Tesla Coffee** web platform.
 
-For full documentation, architecture overview, Firebase configuration, and deployment guides, please see the main [Project README](../README.md).
+For the full technical specification, system architecture diagram, Firestore schemas, and deployment documentation, refer to the [Root Repository README](../README.md).
 
-## Quick Commands
+## Quick Reference Scripts
 
-- `npm start` : Run development server at `http://localhost:3000`
-- `npm run build` : Build production-ready bundle
-- `npm test` : Run automated test suites
-- `firebase deploy` : Deploy build bundle to Firebase Hosting
+| Command | Purpose |
+| :--- | :--- |
+| `npm start` | Launches development server with Hot Module Replacement (HMR) at `localhost:3000` |
+| `npm run build` | Compiles optimized, minified production distribution into `/build` |
+| `npm test` | Runs Jest & React Testing Library test runner in interactive mode |
+| `firebase deploy` | Deploys `/build` bundle to Firebase Hosting CDN |
