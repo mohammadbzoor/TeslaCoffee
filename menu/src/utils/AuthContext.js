@@ -6,19 +6,47 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
-import { arrayUnion, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { auth, data } from "../firebase/firebese";
 
 const AuthContext = createContext(null);
 
+// ✅ إنشاء أو تحديث المستخدم
 async function ensureUserDocument(currentUser, fallbackData = {}) {
   const userDocRef = doc(data, "authentact", currentUser.uid);
   const userDoc = await getDoc(userDocRef);
 
+  // ✅ إذا المستخدم موجود
   if (userDoc.exists()) {
-    return userDoc.data();
+    const existingData = userDoc.data();
+    const updates = {};
+
+    // ✅ حماية isAdmin (يجب يكون boolean)
+    if (typeof existingData.isAdmin !== "boolean") {
+      updates.isAdmin = false;
+      existingData.isAdmin = false;
+    }
+
+    // ✅ IMPORTANT: إجبار أي مستخدم مو أدمن يكون false
+    if (existingData.isAdmin !== true) {
+      updates.isAdmin = false;
+      existingData.isAdmin = false;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await setDoc(userDocRef, updates, { merge: true });
+    }
+
+    return existingData;
   }
 
+  // ✅ إنشاء مستخدم جديد
   const newUserData = {
     uid: currentUser.uid,
     name:
@@ -28,7 +56,7 @@ async function ensureUserDocument(currentUser, fallbackData = {}) {
       "",
     email: currentUser.email || fallbackData.email || "",
     phone: fallbackData.phone || "",
-    isAdmin: true,
+    isAdmin: false, // ✅ المهم
     actions: [],
     createdAt: new Date().toISOString(),
   };
@@ -37,15 +65,9 @@ async function ensureUserDocument(currentUser, fallbackData = {}) {
   return newUserData;
 }
 
+// ✅ التحقق من الأدمن (بسيط وواضح)
 function checkIsAdmin(userData) {
-  return (
-    userData.role === "admin" ||
-    userData.role === "isAdmin" ||
-    userData.isAdmin === true ||
-    String(userData.isAdmin).toLowerCase() === "true" ||
-    userData.isAdmain === true ||
-    String(userData.isAdmain).toLowerCase() === "true"
-  );
+  return userData.isAdmin === true;
 }
 
 export function AuthProvider({ children }) {
@@ -57,31 +79,36 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+
         try {
           const userData = await ensureUserDocument(currentUser);
-          console.log("User data fetched:", userData);
           setIsAdmin(checkIsAdmin(userData));
         } catch (error) {
-          console.error("Error fetching user role:", error);
+          console.error("Error:", error);
           setIsAdmin(false);
         }
       } else {
         setUser(null);
         setIsAdmin(false);
       }
+
       setLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
+  // ✅ تسجيل الدخول
   const login = async (email, password) => {
     const credential = await signInWithEmailAndPassword(auth, email, password);
-    const loggedInUser = credential.user;
-    await ensureUserDocument(loggedInUser, { email });
-    return loggedInUser;
+    const user = credential.user;
+
+    await ensureUserDocument(user, { email });
+
+    return user;
   };
 
+  // ✅ إنشاء حساب
   const register = async ({ name, email, password, phone }) => {
     const { user: newUser } = await createUserWithEmailAndPassword(
       auth,
@@ -91,44 +118,66 @@ export function AuthProvider({ children }) {
 
     await updateProfile(newUser, { displayName: name });
 
-    await ensureUserDocument(newUser, { name, email, phone });
+    const userDocRef = doc(data, "authentact", newUser.uid);
+
+    await setDoc(userDocRef, {
+      uid: newUser.uid,
+      name,
+      email,
+      phone: phone || "",
+      isAdmin: false,
+      actions: [],
+      createdAt: new Date().toISOString(),
+    });
 
     return newUser;
   };
 
+  // ✅ تسجيل الخروج
   const logout = () => signOut(auth);
 
+  // ✅ تسجيل الأحداث
   const logUserAction = async (action) => {
-    if (!user) return { success: false, reason: "no-user" };
+    if (!user) return;
+
+    const userDocRef = doc(data, "authentact", user.uid);
 
     try {
-      await ensureUserDocument(user);
-      await updateDoc(doc(data, "authentact", user.uid), {
+      await updateDoc(userDocRef, {
         actions: arrayUnion({
-          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          createdAt: new Date().toISOString(),
           ...action,
+          timestamp: new Date().toISOString(),
         }),
       });
-
-      return { success: true };
     } catch (error) {
-      console.error("Error logging user action:", error);
-      return { success: false, error };
+      console.error("Error logging action:", error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, login, register, logout, logUserAction }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAdmin,
+        loading,
+        login,
+        register,
+        logout,
+        logUserAction,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
+// ✅ Hook
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used within AuthProvider");
   }
+
   return context;
 }

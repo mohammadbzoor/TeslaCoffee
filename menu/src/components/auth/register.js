@@ -8,43 +8,78 @@ export default function Register({ onSwitch }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { register } = useAuth();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     phone: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+
+  // ✅ تحديث القيم
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value.trimStart(), // منع المسافات بالبداية
+    }));
   };
 
+
+  // ✅ إرسال النموذج
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return; // منع الضغط مرتين
+
     setError("");
-    setLoading(true);
+
+    // ✅ تحقق بسيط
+    if (!formData.name || !formData.email || !formData.password) {
+      setError("يرجى تعبئة جميع الحقول");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+      return;
+    }
 
     try {
+      setLoading(true);
+
       await register(formData);
+
       const redirectTo = location.state?.from || "/";
       navigate(redirectTo, { replace: true });
+
     } catch (err) {
-      setError(getAuthErrorMessage(err.code));
+      console.error(err);
+      setError(getAuthErrorMessage(err?.code) || "حدث خطأ أثناء إنشاء الحساب");
     } finally {
       setLoading(false);
     }
   };
 
+
   return (
     <>
       <h1 className="auth-title">إنشاء حساب جديد</h1>
 
-      {error && <Alert variant="danger" className="auth-alert">{error}</Alert>}
+      {error && (
+        <Alert variant="danger" className="auth-alert">
+          {error}
+        </Alert>
+      )}
 
       <Form onSubmit={handleSubmit} dir="rtl">
+
+        {/* الاسم */}
         <Form.Group className="mb-3">
           <Form.Label className="auth-label">الاسم</Form.Label>
           <Form.Control
@@ -58,6 +93,7 @@ export default function Register({ onSwitch }) {
           />
         </Form.Group>
 
+        {/* الإيميل */}
         <Form.Group className="mb-3">
           <Form.Label className="auth-label">البريد الإلكتروني</Form.Label>
           <Form.Control
@@ -71,6 +107,7 @@ export default function Register({ onSwitch }) {
           />
         </Form.Group>
 
+        {/* الباسورد */}
         <Form.Group className="mb-3">
           <Form.Label className="auth-label">كلمة المرور</Form.Label>
           <Form.Control
@@ -85,6 +122,7 @@ export default function Register({ onSwitch }) {
           />
         </Form.Group>
 
+        {/* الهاتف */}
         <Form.Group className="mb-3">
           <Form.Label className="auth-label">رقم الهاتف</Form.Label>
           <Form.Control
@@ -98,14 +136,24 @@ export default function Register({ onSwitch }) {
           />
         </Form.Group>
 
-        <button type="submit" className="auth-btn" disabled={loading}>
+        {/* الزر */}
+        <button
+          type="submit"
+          className="auth-btn"
+          disabled={loading}
+        >
           {loading ? "جاري إنشاء الحساب..." : "إنشاء الحساب"}
         </button>
       </Form>
 
+      {/* التحويل */}
       <p className="auth-footer">
         لديك حساب بالفعل؟{" "}
-        <button type="button" className="auth-link-btn" onClick={onSwitch}>
+        <button
+          type="button"
+          className="auth-link-btn"
+          onClick={onSwitch}
+        >
           تسجيل الدخول
         </button>
       </p>

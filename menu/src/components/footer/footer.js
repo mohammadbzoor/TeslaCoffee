@@ -1,40 +1,70 @@
 import { Container, Row, Col } from "react-bootstrap";
-import { FaFacebookF, FaInstagram, FaWhatsapp, FaMapMarkerAlt } from "react-icons/fa";
+import {
+  FaInstagram,
+  FaWhatsapp,
+  FaMapMarkerAlt,
+  FaPhone
+} from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer style={{ background: "#222", color: "#fff", padding: "32px 0 12px 0" }}>
+    <footer style={{ background: "#222", color: "#fff", padding: "40px 0 15px 0" }}>
       <Container>
-        <Row className="align-items-center text-center text-md-end">
-          <Col md={4} className="mb-3 mb-md-0">
-            <h5 style={{ color: "#ff3e3e", fontWeight: 700, letterSpacing: 1 }}>Tesla Coffee</h5>
-            <div style={{ fontSize: 15, color: "#bbb" }}>
-              <FaMapMarkerAlt style={{ marginLeft: 6 }} />
-              عمان - الأردن
+        <Row className="text-center text-md-end">
+
+          {/* معلومات المكان */}
+          <Col md={4} className="mb-4">
+            <h5 style={{ color: "#b45b35", fontWeight: 700 }}>
+              Tesla Coffee
+            </h5>
+            <div style={{ color: "#bbb" }}>
+              <p>
+                <FaMapMarkerAlt /> المفرق - الخالدية
+              </p>
+              <p>
+                <FaPhone /> 0785865610
+              </p>
+              {/* <p>
+                <FaEnvelope /> support@foodlover.com
+              </p> */}
             </div>
           </Col>
-          <Col md={4} className="mb-3 mb-md-0">
-            <div style={{ fontSize: 15, color: "#bbb" }}>
-              جميع الحقوق محفوظة &copy; {new Date().getFullYear()}
-            </div>
-            <div style={{ fontSize: 13, color: "#888" }}>
-              تصميم وبرمجة فريق Tesla Coffee
-            </div>
+
+          {/* ساعات العمل */}
+          <Col md={4} className="mb-4">
+            <h6 style={{ color: "#b45b35" }}>ساعات العمل</h6>
+          <p style={{ color: "#bbb", fontSize: "14px" }}>
+                   من 4:00 مساءً إلى 3:00 فجرًا
+          </p>
           </Col>
+
+          {/* السوشيال */}
           <Col md={4}>
-            <div className="d-flex justify-content-center justify-content-md-end gap-3">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={{ color: "#fff", background: "#3b5998", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <h6 style={{ color: "#b45b35" }}>تابعنا</h6>
+            <div className="d-flex justify-content-center justify-content-md-end gap-3 mt-3">
+              {/* <a href="https://facebook.com" target="_blank" rel="noreferrer" className="footer-social-icon">
                 <FaFacebookF />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: "#fff", background: "#E1306C", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              </a> */}
+
+              <a href="https://www.instagram.com/t.cofe.1?igsh=emMyeTZ2MWtoODA4" target="_blank" rel="noreferrer" className="footer-social-icon">
                 <FaInstagram />
               </a>
-              <a href="https://wa.me/962790000000" target="_blank" rel="noopener noreferrer" style={{ color: "#fff", background: "#25D366", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center" }}>
+
+              <a href="https://wa.me/962785865610" target="_blank" rel="noreferrer" className="footer-social-icon">
                 <FaWhatsapp />
               </a>
             </div>
           </Col>
+
         </Row>
+
+        {/* الحقوق */}
+        {/* <div className="text-center mt-4" style={{ fontSize: "14px", color: "#aaa" }}>
+          جميع الحقوق محفوظة © {new Date().getFullYear()}
+          <br />
+          Tesla Coffee
+        </div> */}
+
       </Container>
     </footer>
   );

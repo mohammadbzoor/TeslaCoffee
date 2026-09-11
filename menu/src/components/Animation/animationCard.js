@@ -6,13 +6,15 @@ import { useLocation } from "react-router-dom";
 import { addToCart } from "../../utils/functionMenu";
 import { useCart } from "../../utils/CartContext";
 import { useAuth } from "../../utils/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function AnimatedCard({ item, index, handleImageError }) {
   const controls = useAnimation();
   const [ref, inView] = useInView({ triggerOnce: true });
   const location = useLocation();
   const { refreshCartCount } = useCart();
-  const { logUserAction } = useAuth();
+  const { user, logUserAction } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (inView) {
@@ -24,6 +26,10 @@ export default function AnimatedCard({ item, index, handleImageError }) {
 
   // دالة عند الضغط على اطلب الآن
   const handleOrderNow = () => {
+    if (!user) {
+      navigate("/auth", { state: { from: "/menu" } });
+      return;
+    }
     console.log("بيانات المنتج:", item); // أضف هذا السطر
     if (!item.id || !item.title || !item.imgUrl || !item.newPrice) {
       alert("هناك خطأ في بيانات المنتج، لا يمكن إضافته للسلة.");
@@ -34,7 +40,7 @@ export default function AnimatedCard({ item, index, handleImageError }) {
       name: item.title,
       price: item.newPrice,
       img: item.imgUrl,
-    });
+    }, user?.uid);
     if (added) {
       logUserAction({
         type: "add_to_cart",

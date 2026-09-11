@@ -1,5 +1,5 @@
 import { Container, Card, Button, Row, Col, Modal, Form, Alert } from "react-bootstrap";
-import { getCart, removeFromCart } from "../utils/functionMenu";
+import { getCart, removeFromCart, updateCartQuantity, clearCart } from "../utils/functionMenu";
 import { useState, useEffect } from "react";
 import { useCart } from "../utils/CartContext";
 import { collection, addDoc } from "firebase/firestore";
@@ -7,9 +7,9 @@ import { data } from "../firebase/firebese";
 import { useAuth } from "../utils/AuthContext";
 
 export default function Cart() {
-  const [cart, setCart] = useState(getCart());
-  const { refreshCartCount } = useCart();
   const { user, logUserAction } = useAuth();
+  const [cart, setCart] = useState(getCart(user?.uid));
+  const { refreshCartCount } = useCart();
 
   const [showCheckout, setShowCheckout] = useState(false);
   const [tableNumber, setTableNumber] = useState("");
@@ -19,20 +19,19 @@ export default function Cart() {
 
   // تحديث السلة عند أي تغيير في localStorage (مثلاً عند الإضافة)
   useEffect(() => {
-    const handleStorage = () => setCart(getCart());
+    const handleStorage = () => setCart(getCart(user?.uid));
     window.addEventListener("storage", handleStorage);
-    // تحديث عند العودة للصفحة
-    const interval = setInterval(() => setCart(getCart()), 500);
+    const interval = setInterval(() => setCart(getCart(user?.uid)), 500);
     return () => {
       window.removeEventListener("storage", handleStorage);
       clearInterval(interval);
     };
-  }, []);
+  }, [user]);
 
   const handleRemove = (id) => {
     const removedItem = cart.find((item) => item.id === id);
-    removeFromCart(id);
-    setCart(getCart());
+    removeFromCart(id, user?.uid);
+    setCart(getCart(user?.uid));
     if (removedItem) {
       logUserAction({
         type: "remove_from_cart",
@@ -42,6 +41,15 @@ export default function Cart() {
         quantity: removedItem.quantity || 1,
       });
     }
+    refreshCartCount();
+  };
+
+  const handleQuantityChange = (id, delta) => {
+    const item = cart.find((cartItem) => cartItem.id === id);
+    if (!item) return;
+    const newQuantity = Math.max(1, item.quantity + delta);
+    updateCartQuantity(id, newQuantity, user?.uid);
+    setCart(getCart(user?.uid));
     refreshCartCount();
   };
 
@@ -85,8 +93,8 @@ export default function Cart() {
         })),
       });
 
-      // Clear localStorage cart
-      localStorage.removeItem("cart");
+      // Clear localStorage cart for this user
+      clearCart(user?.uid);
       setCart([]);
       refreshCartCount();
       setOrderSuccess(true);
@@ -125,21 +133,52 @@ export default function Cart() {
                     style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 12, marginLeft: 16 }}
                   />
                   <Card.Body className="d-flex flex-column justify-content-between">
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                       <div>
                         <Card.Title className="mb-1">{item.name || "منتج غير معروف"}</Card.Title>
                         <div className="text-muted" style={{ fontSize: 14 }}>
-                          السعر: {item.price ? `${item.price} د.أ` : "غير متوفر"}
+                          السعر لكل وحدة: {item.price ? `${item.price} د.أ` : "غير متوفر"}
                         </div>
+                        {item.category && (
+                          <div className="text-muted" style={{ fontSize: 13 }}>
+                            التصنيف: {item.category}
+                          </div>
+                        )}
+                        {item.description && (
+                          <div className="text-muted" style={{ fontSize: 13 }}>
+                            {item.description}
+                          </div>
+                        )}
                       </div>
                       <Button variant="danger" size="sm" style={{ minWidth: 60 }} onClick={() => handleRemove(item.id)}>
                         حذف
                       </Button>
                     </div>
-                    <div className="mt-2">
-                      <div className="d-flex justify-content-between align-items-center mb-1">
-                        <span style={{ fontSize: 13 }}>الكمية: {item.quantity || 1}</span>
+                    <div className="mt-3">
+                      <div className="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() => handleQuantityChange(item.id, -1)}
+                          >
+                            -
+                          </Button>
+                          <span style={{ minWidth: 28, textAlign: "center", fontSize: 14 }}>
+                            {item.quantity || 1}
+                          </span>
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() => handleQuantityChange(item.id, 1)}
+                          >
+                            +
+                          </Button>
+                        </div>
                         <span className="fw-bold">{item.price && item.quantity ? item.price * item.quantity : ""} د.أ</span>
+                      </div>
+                      <div className="text-muted" style={{ fontSize: 13 }}>
+                        إجمالي السطر: {item.price && item.quantity ? `${item.price * item.quantity} د.أ` : "غير متوفر"}
                       </div>
                     </div>
                   </Card.Body>

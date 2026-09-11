@@ -12,18 +12,29 @@ export default function ProductManagement() {
   const { products, loading, error } = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
   const [sectionFilter, setSectionFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [editingProduct, setEditingProduct] = useState(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
+  const categoryOptions = useMemo(() => {
+    const categories = products
+      .map((product) => product.category || "")
+      .filter((category) => category.trim() !== "");
+    return ["all", ...Array.from(new Set(categories))];
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesSection = sectionFilter === "all" || product.section === sectionFilter;
+      const matchesCategory =
+        categoryFilter === "all" ||
+        (product.category || "").trim().toLowerCase() === categoryFilter.trim().toLowerCase();
       const text = `${product.title || ""} ${product.description || ""} ${product.category || ""}`;
       const matchesSearch = text.toLowerCase().includes(searchTerm.trim().toLowerCase());
-      return matchesSection && matchesSearch;
+      return matchesSection && matchesCategory && matchesSearch;
     });
-  }, [products, searchTerm, sectionFilter]);
+  }, [products, searchTerm, sectionFilter, categoryFilter]);
 
   const menuCount = products.filter((product) => product.section === "menu").length;
   const offersCount = products.filter((product) => product.section === "offers").length;
@@ -120,7 +131,7 @@ export default function ProductManagement() {
       <Card className="admin-products-toolbar mb-3">
         <Card.Body>
           <Row className="g-3 align-items-center">
-            <Col lg={8}>
+            <Col lg={5}>
               <div className="admin-search-box">
                 <FaSearch />
                 <Form.Control
@@ -131,7 +142,7 @@ export default function ProductManagement() {
                 />
               </div>
             </Col>
-            <Col lg={4}>
+            <Col lg={3}>
               <Form.Select
                 value={sectionFilter}
                 onChange={(event) => setSectionFilter(event.target.value)}
@@ -140,6 +151,20 @@ export default function ProductManagement() {
                 <option value="all">كل الأقسام</option>
                 <option value="menu">المنيو</option>
                 <option value="offers">العروض</option>
+              </Form.Select>
+            </Col>
+            <Col lg={4}>
+              <Form.Select
+                value={categoryFilter}
+                onChange={(event) => setCategoryFilter(event.target.value)}
+                className="text-end"
+              >
+                <option value="all">كل التصنيفات</option>
+                {categoryOptions.map((cat) =>
+                  cat === "all" ? null : (
+                    <option key={cat} value={cat}>{cat}</option>
+                  )
+                )}
               </Form.Select>
             </Col>
           </Row>

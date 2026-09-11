@@ -1,33 +1,55 @@
-export function addToCart(product) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const CART_KEY_PREFIX = "cart_";
+
+function getCartKey(userId) {
+  if (!userId) return null;
+  return `${CART_KEY_PREFIX}${userId}`;
+}
+
+export function addToCart(product, userId) {
+    if (!userId) return false;
+    const key = getCartKey(userId);
+    let cart = JSON.parse(localStorage.getItem(key)) || [];
     const existing = cart.find((item) => item.id === product.id);
     if (existing) {
-      // المنتج موجود بالفعل، لا تضف أو زد الكمية
       return false;
     } else {
       cart.push({ ...product, quantity: 1 });
     }
-    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem(key, JSON.stringify(cart));
     return true;
 }
+
 // جلب السلة
-export function getCart() {
-  return JSON.parse(localStorage.getItem("cart")) || [];
+export function getCart(userId) {
+  const key = getCartKey(userId);
+  if (!key) return [];
+  return JSON.parse(localStorage.getItem(key)) || [];
 }
 
 // حذف منتج من السلة
-export function removeFromCart(id) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+export function removeFromCart(id, userId) {
+  const key = getCartKey(userId);
+  if (!key) return;
+  let cart = JSON.parse(localStorage.getItem(key)) || [];
   cart = cart.filter((item) => item.id !== id);
-  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem(key, JSON.stringify(cart));
 }
 
 // تعديل كمية منتج
-export function updateCartQuantity(id, quantity) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+export function updateCartQuantity(id, quantity, userId) {
+  const key = getCartKey(userId);
+  if (!key) return;
+  let cart = JSON.parse(localStorage.getItem(key)) || [];
   cart = cart.map((item) =>
     item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
   );
-  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem(key, JSON.stringify(cart));
+}
+
+// مسح السلة الخاصة بالمستخدم
+export function clearCart(userId) {
+  const key = getCartKey(userId);
+  if (!key) return;
+  localStorage.removeItem(key);
 }
 

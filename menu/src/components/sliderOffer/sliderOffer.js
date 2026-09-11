@@ -7,10 +7,14 @@ import { Card } from "react-bootstrap";
 import { FaTags, FaBolt, FaPercent } from "react-icons/fa";
 import { addToCart } from "../../utils/functionMenu";
 import { useCart } from "../../utils/CartContext";
+import { useAuth } from "../../utils/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function SliderOffer() {
   const [offers, setOffers] = useState([]);
   const { refreshCartCount } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = getMenuItemsRealtime((result) => {
@@ -22,12 +26,16 @@ export default function SliderOffer() {
   }, []);
 
   const handleOrderNow = (offer) => {
+    if (!user) {
+      navigate("/auth", { state: { from: "/offers" } });
+      return;
+    }
     addToCart({
       id: offer.id,
       name: offer.title || offer.name,
       price: offer.newPrice || offer.price,
       img: offer.imgUrl || offer.img,
-    });
+    }, user?.uid);
     refreshCartCount();
   };
 

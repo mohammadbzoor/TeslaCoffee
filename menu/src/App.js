@@ -16,7 +16,7 @@ import Footer from "./components/footer/footer";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
-
+import HeroSection from "./components/HeroSection";
 function App() {
   const [category, setCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,19 +33,18 @@ function App() {
           <Navbar onSearch={setSearchTerm} />
 
           {location.pathname === "/" && <Slider />}
+          {location.pathname === "/" && <HeroSection />}
 
           <Container>
             <Routes>
               <Route
                 path="/menu"
                 element={
-                  <ProtectedRoute>
                     <>
                       <Heder />
                       <Category onSelectCategory={handleSelectCategory} />
                       <CardList category={category} searchTerm={searchTerm} />
                     </>
-                  </ProtectedRoute>
                 }
               />
               <Route
@@ -64,30 +63,9 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/cart"
-                element={
-                  <ProtectedRoute>
-                    <Cart />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="offers"
-                element={
-                  <ProtectedRoute>
-                    <Offers />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/" element={<Home />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="offers" element={<Offers />} />
               <Route path="/auth" element={<Auth />} />
             </Routes>
           </Container>

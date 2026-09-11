@@ -1,16 +1,18 @@
-import { Container, Row, Col, Card, Badge } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { FaTags, FaBolt, FaPercent } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { getMenuItemsRealtime } from "../utils/functionFirebase";
 import { addToCart } from "../utils/functionMenu";
 import { useCart } from "../utils/CartContext";
 import { useAuth } from "../utils/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Offers({ hideWhenEmpty = false }) {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const { refreshCartCount } = useCart();
-  const { logUserAction } = useAuth();
+  const { user, logUserAction } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = getMenuItemsRealtime((result) => {
@@ -23,12 +25,16 @@ export default function Offers({ hideWhenEmpty = false }) {
   }, []);
 
   const handleOrderNow = (offer) => {
+    if (!user) {
+      navigate("/auth", { state: { from: "/offers" } });
+      return;
+    }
     const added = addToCart({
       id: offer.id,
       name: offer.title || offer.name,
       price: offer.newPrice || offer.price,
       img: offer.imgUrl || offer.img,
-    });
+    }, user?.uid);
     if (added) {
       logUserAction({
         type: "add_to_cart",
@@ -40,8 +46,6 @@ export default function Offers({ hideWhenEmpty = false }) {
       });
     }
     refreshCartCount();
-    // إذا أردت توجيه المستخدم إلى صفحة المشتريات:
-    // navigate("/cart");
   };
 
   if (hideWhenEmpty && !loading && offers.length === 0) {

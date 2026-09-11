@@ -19,8 +19,6 @@ const NavBar = ({ onSearch }) => {
     }
   };
 
-  const userName = user?.displayName || user?.email?.split("@")[0] || "مستخدم";
-
   return (
     <Navbar bg="dark" expand="lg" variant="dark" className="py-2">
       <Container style={{ direction: "ltr" }}>
@@ -90,7 +88,7 @@ const NavBar = ({ onSearch }) => {
             
 
             {!loading && user ? (
-              <button type="button" onClick={handleLogout} className="nav-logout-btn brand-color">
+              <button style={{ textDecoration: "none" }} type="button" onClick={handleLogout} className="nav-logout-btn brand-color">
                 Logout
               </button>
             ) : (
