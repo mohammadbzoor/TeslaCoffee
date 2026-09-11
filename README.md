@@ -137,7 +137,7 @@ interface CartItem {
 MenuFood/
 ├── .gitignore                      # Git exclusion rules (node_modules, builds, secrets)
 ├── README.md                       # Comprehensive repository documentation
-└── menu/                           # Core React 19 web application
+└── coffee/                         # Core React 19 web application
     ├── .firebaserc                 # Firebase CLI active project configuration
     ├── firebase.json               # Firebase Hosting rewrite & cache headers
     ├── package.json                # Project dependencies and script declarations
@@ -187,7 +187,7 @@ MenuFood/
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/mohammadbzoor/TeslaCoffee.git
-cd TeslaCoffee/menu
+cd TeslaCoffee/coffee
 ```
 
 ### 2. Install Dependencies
@@ -199,7 +199,7 @@ npm install
 The client application comes pre-configured with project `teslacoffee-04`. If you are setting up your own Firebase environment:
 1. Create a project at [Firebase Console](https://console.firebase.google.com/).
 2. Enable **Authentication** (Email/Password), **Firestore Database**, and **Cloud Storage**.
-3. Update `menu/src/firebase/firebese.js` with your credentials:
+3. Update `coffee/src/firebase/firebese.js` with your credentials:
 ```javascript
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -226,7 +226,7 @@ Execute an optimized production bundle:
 ```bash
 npm run build
 ```
-This produces an asset bundle in `menu/build/` with automated code splitting, tree shaking, minification, and gzip compression.
+This produces an asset bundle in `coffee/build/` with automated code splitting, tree shaking, minification, and gzip compression.
 
 ### Deploy to Firebase Hosting
 1. Install Firebase CLI globally:
